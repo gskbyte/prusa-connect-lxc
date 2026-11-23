@@ -35,7 +35,7 @@ journalctl -u prusa-connect | grep setup_code | tail -n 1
 
 ## Update Prusa Connect
 
-Prusa Connect ships frequent beta releases on GitHub. The CT script tracks both pre-releases and stable releases from `prusa3d/prusa-connect`. All persistent data stays in `/opt/prusa-connect_data`, separate from the binary in `/opt/prusa-connect`.
+Prusa Connect ships frequent beta releases on GitHub. The CT script tracks both pre-releases and stable releases from `prusa3d/prusa-connect`. All persistent data stays in `/opt/prusa-connect_data`, separate from the binary in `/opt/prusa-connect`. The `update` command updates only the Prusa Connect binary, not the Debian OS packages.
 
 > [!CAUTION]
 > Before you update Prusa Connect, make a backup of the LXC container or `/opt/prusa-connect_data`. Prusa Connect is in public beta.
@@ -45,6 +45,18 @@ Prusa Connect ships frequent beta releases on GitHub. The CT script tracks both 
 
 ```bash
 update
+```
+
+To update inside the container without the interactive menu, run:
+
+```bash
+PHS_SILENT=1 update
+```
+
+To update from the Proxmox VE host without the interactive menu, run:
+
+```bash
+pct exec <CTID> -- env PHS_SILENT=1 update
 ```
 
 ## Repository Files
