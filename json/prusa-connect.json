@@ -1,0 +1,55 @@
+{
+  "name": "Prusa Connect",
+  "slug": "prusa-connect",
+  "categories": [
+    16
+  ],
+  "date_created": "2026-11-23",
+  "type": "ct",
+  "updateable": true,
+  "privileged": false,
+  "interface_port": 8080,
+  "documentation": "https://github.com/prusa3d/prusa-connect/tree/main/docs/src/content/docs",
+  "website": "https://github.com/prusa3d/prusa-connect",
+  "repository": "https://github.com/prusa3d/prusa-connect",
+  "architectures": [
+    "amd64"
+  ],
+  "platforms": [
+    "pve"
+  ],
+  "logo": "https://raw.githubusercontent.com/prusa3d/prusa-connect/main/frontend/public/icons/icon.svg",
+  "description": "Prusa Connect is a self-hosted, local-first server for managing 3D printers on your own network without relying on cloud infrastructure. It provides a web dashboard for live printer monitoring, G-code file uploads, print control, user accounts, and permissions, along with a REST API, server-sent events, MQTT sinks, and an extension marketplace.",
+  "install_methods": [
+    {
+      "type": "default",
+      "script": "ct/prusa-connect.sh",
+      "config_path": "/opt/prusa-connect_data/config/config.yaml",
+      "resources": {
+        "cpu": 2,
+        "ram": 1024,
+        "hdd": 8,
+        "os": "Debian",
+        "version": "13"
+      }
+    }
+  ],
+  "default_credentials": {
+    "username": null,
+    "password": null
+  },
+  "notes": [
+    {
+      "text": "Get the one-time setup code for the first-run wizard by running 'journalctl -u prusa-connect | grep setup_code | tail -n 1' inside the container.",
+      "type": "info"
+    },
+    {
+      "text": "Prusa Connect is in public beta (0.x pre-releases). Back up your container or /opt/prusa-connect_data before updating.",
+      "type": "warning"
+    },
+    {
+      "text": "Prusa printers require firmware 6.4.0 or newer and a prusa_printer_settings.ini file generated on the Add a printer page.",
+      "type": "info"
+    }
+  ]
+}
