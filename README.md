@@ -20,16 +20,18 @@ PRUSA_CONNECT_REPO_URL="https://raw.githubusercontent.com/gskbyte/prusa-connect-
 
 ## Complete the First-Run Setup
 
-1. Open the LXC container console.
-2. Read the latest setup code from the systemd journal:
+The install script shows the one-time setup code after the service starts.
+
+1. Copy the setup code from the install output.
+2. Open `http://<container-ip>:8080` in a web browser.
+3. Enter the setup code.
+4. Complete the setup wizard.
+
+If the container restarts before you complete the wizard, read the new setup code in the container console:
 
 ```bash
 journalctl -u prusa-connect | grep setup_code | tail -n 1
 ```
-
-3. Open `http://<container-ip>:8080` in a web browser.
-4. Enter the setup code.
-5. Complete the setup wizard.
 
 ## Update Prusa Connect
 

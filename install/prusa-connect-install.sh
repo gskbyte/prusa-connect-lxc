@@ -46,6 +46,20 @@ EOF
 systemctl enable -q --now prusa-connect
 msg_ok "Created Service"
 
+msg_info "Waiting for Prusa Connect Setup Code"
+SETUP_CODE=""
+for _ in {1..15}; do
+  SETUP_CODE=$({ journalctl -u prusa-connect --no-pager 2>/dev/null || true; } | sed -n 's/.*setup_code=\([^[:space:]]*\).*/\1/p' | tail -n 1 | tr -d '"')
+  [[ -n "$SETUP_CODE" ]] && break
+  sleep 1
+done
+if [[ -n "$SETUP_CODE" ]]; then
+  msg_ok "Prusa Connect Setup Code: ${SETUP_CODE}"
+else
+  msg_ok "Started Prusa Connect"
+  msg_warn "Setup code not logged yet; run 'journalctl -u prusa-connect | grep setup_code | tail -n 1' inside the container."
+fi
+
 motd_ssh
 customize
 cleanup_lxc
