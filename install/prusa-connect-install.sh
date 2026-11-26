@@ -48,6 +48,25 @@ EOF
 systemctl enable -q --now prusa-connect
 msg_ok "Created Service"
 
+msg_info "Waiting for Prusa Connect"
+READY=0
+for _ in {1..30}; do
+  if systemctl is-active --quiet prusa-connect && (cd /opt/prusa-connect_data && /opt/prusa-connect/prusa-connect core healthcheck >/dev/null 2>&1); then
+    READY=1
+    break
+  fi
+  if systemctl is-failed --quiet prusa-connect; then
+    break
+  fi
+  sleep 2
+done
+if ((READY)); then
+  msg_ok "Prusa Connect is ready"
+else
+  msg_error "Prusa Connect did not become ready. Check logs: journalctl -u prusa-connect -n 50 --no-pager"
+  exit 1
+fi
+
 msg_info "Waiting for Prusa Connect Setup Code"
 SETUP_CODE=""
 for _ in {1..15}; do
