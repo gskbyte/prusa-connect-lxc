@@ -39,12 +39,52 @@ function update_script() {
     systemctl stop prusa-connect
     msg_ok "Stopped Prusa Connect"
 
-    GH_INCLUDE_PRERELEASE=1 fetch_and_deploy_gh_release "prusa-connect" "prusa3d/prusa-connect" "singlefile" "latest" "/opt/prusa-connect" "prusa_connect_$(arch_resolve "amd64" "aarch64")"
+    PREV_VERSION=""
+    if [[ -f ~/.prusa-connect ]]; then
+      PREV_VERSION=$(<~/.prusa-connect)
+    fi
+    cp -a /opt/prusa-connect/prusa-connect /opt/prusa-connect/prusa-connect.bak
+
+    if ! GH_INCLUDE_PRERELEASE=1 fetch_and_deploy_gh_release "prusa-connect" "prusa3d/prusa-connect" "singlefile" "latest" "/opt/prusa-connect" "prusa_connect_$(arch_resolve "amd64" "aarch64")"; then
+      rm -f /opt/prusa-connect/prusa-connect.bak
+      systemctl start prusa-connect || true
+      exit 1
+    fi
 
     msg_info "Starting Prusa Connect"
-    systemctl start prusa-connect
-    msg_ok "Started Prusa Connect"
-    msg_ok "Updated successfully!"
+    systemctl start prusa-connect || true
+    READY=0
+    for _ in {1..30}; do
+      if systemctl is-active --quiet prusa-connect && (cd /opt/prusa-connect_data && /opt/prusa-connect/prusa-connect core healthcheck >/dev/null 2>&1); then
+        READY=1
+        break
+      fi
+      if systemctl is-failed --quiet prusa-connect; then
+        break
+      fi
+      sleep 2
+    done
+    if ((READY)); then
+      rm -f /opt/prusa-connect/prusa-connect.bak
+      msg_ok "Started Prusa Connect"
+      msg_ok "Updated successfully!"
+    else
+      msg_error "Prusa Connect failed health check after update; rolling back binary"
+      systemctl stop prusa-connect || true
+      mv -f /opt/prusa-connect/prusa-connect.bak /opt/prusa-connect/prusa-connect
+      if [[ -n "$PREV_VERSION" ]]; then
+        echo "$PREV_VERSION" >~/.prusa-connect
+      else
+        rm -f ~/.prusa-connect
+      fi
+      rm -f ~/.prusa-connect.pending
+      if systemctl start prusa-connect; then
+        msg_warn "Rolled back Prusa Connect binary to ${PREV_VERSION:-previous version}. Check logs: journalctl -u prusa-connect -n 50 --no-pager"
+      else
+        msg_error "Rollback failed to start Prusa Connect; restore from a Proxmox snapshot or backup."
+      fi
+      exit 1
+    fi
   fi
   exit
 }
