@@ -27,10 +27,10 @@ The install script shows the one-time setup code after the service starts.
 3. Enter the setup code.
 4. Complete the setup wizard.
 
-If the container restarts before you complete the wizard, read the new setup code in the container console:
+If the container restarts before you complete the wizard, read the current setup code in the container console:
 
 ```bash
-journalctl -u prusa-connect | grep setup_code | tail -n 1
+journalctl _SYSTEMD_INVOCATION_ID=$(systemctl show -p InvocationID --value prusa-connect) | grep setup_code
 ```
 
 ## Update Prusa Connect

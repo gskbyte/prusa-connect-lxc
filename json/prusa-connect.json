@@ -40,7 +40,7 @@
   },
   "notes": [
     {
-      "text": "Get the one-time setup code for the first-run wizard by running 'journalctl -u prusa-connect | grep setup_code | tail -n 1' inside the container.",
+      "text": "Get the current setup code by running 'journalctl _SYSTEMD_INVOCATION_ID=$(systemctl show -p InvocationID --value prusa-connect) | grep setup_code' inside the container.",
       "type": "info"
     },
     {

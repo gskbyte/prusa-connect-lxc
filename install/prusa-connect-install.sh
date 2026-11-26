@@ -70,15 +70,20 @@ fi
 msg_info "Waiting for Prusa Connect Setup Code"
 SETUP_CODE=""
 for _ in {1..15}; do
-  SETUP_CODE=$({ journalctl -u prusa-connect --no-pager 2>/dev/null || true; } | sed -n 's/.*setup_code=\([^[:space:]]*\).*/\1/p' | tail -n 1 | tr -d '"')
-  [[ -n "$SETUP_CODE" ]] && break
+  INVOCATION_ID=$(systemctl show -p InvocationID --value prusa-connect 2>/dev/null || true)
+  if [[ -n "$INVOCATION_ID" ]]; then
+    SETUP_CODE=$({ journalctl --no-pager -o cat "_SYSTEMD_INVOCATION_ID=${INVOCATION_ID}" 2>/dev/null || true; } | sed -n 's/.*setup_code=\([^[:space:]]*\).*/\1/p' | tail -n 1 | tr -d '"')
+  fi
+  if [[ -n "$SETUP_CODE" ]]; then
+    break
+  fi
   sleep 1
 done
 if [[ -n "$SETUP_CODE" ]]; then
   msg_ok "Prusa Connect Setup Code: ${SETUP_CODE}"
 else
-  msg_ok "Started Prusa Connect"
-  msg_warn "Setup code not logged yet; run 'journalctl -u prusa-connect | grep setup_code | tail -n 1' inside the container."
+  msg_ok "Setup code not found"
+  msg_warn "Setup code not logged for the current service run; run 'journalctl _SYSTEMD_INVOCATION_ID=\$(systemctl show -p InvocationID --value prusa-connect) | grep setup_code' inside the container."
 fi
 
 motd_ssh
