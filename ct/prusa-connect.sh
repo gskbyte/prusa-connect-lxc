@@ -2,9 +2,11 @@
 _CS_DEFAULT_URL="${PRUSA_CONNECT_REPO_URL:-https://raw.githubusercontent.com/gskbyte/prusa-connect-lxc/main}"
 _cs_boot="${COMMUNITY_SCRIPTS_CORE_DIR:-$(dirname "${BASH_SOURCE[0]}")/../../core}/core/build.func"
 source "$_cs_boot" 2>/dev/null || source <(curl -fsSL "${COMMUNITY_SCRIPTS_CORE_URL:-https://raw.githubusercontent.com/community-scripts/core/main}/core/build.func")
-# Copyright (c) 2021-2026 community-scripts ORG
+# Copyright (c) 2026 Jose Alcalá Correa
 # Author: Jose Alcalá Correa
-# License: MIT | https://github.com/community-scripts/DevScripts/raw/main/LICENSE
+# SPDX-License-Identifier: GPL-3.0-only
+# License: GPL-3.0-only | https://github.com/gskbyte/prusa-connect-lxc/blob/main/LICENSE
+# Adapted from MIT-licensed templates by community-scripts ORG (Copyright (c) 2021-2026 community-scripts ORG)
 # Source: https://github.com/prusa3d/prusa-connect
 
 APP="Prusa-Connect"

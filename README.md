@@ -93,3 +93,9 @@ pct exec <CTID> -- bash /tmp/prusa-connect.sh
 | Systemd unit | `/etc/systemd/system/prusa-connect.service` |
 | Web interface | `http://<container-ip>:8080` |
 | Installed version file | `/root/.prusa-connect` |
+
+## License
+
+This repository uses the GNU General Public License v3.0 only (`GPL-3.0-only`). The [LICENSE](LICENSE) file contains the full license text.
+
+These scripts use templates under the MIT license from `community-scripts ORG`. At runtime, the CT script loads the `community-scripts/core` engine under the MIT license. Prusa Connect keeps its own upstream license in `prusa3d/prusa-connect`.
